@@ -1,0 +1,97 @@
+----
+[initial ideas]
+
+- find event that toggles view/edit
+- capture either || or <table>?
+	- MUST store all actual edit code
+	- parse || anyway, cause have to replace it
+- confluence parser?
+	- character formatting
+	- || - <tr> conversion. tough?
+- integrate row reordering
+- add controls to each row?
+- click to edit (save/cancel)
+- tab functionality?
+
+----
+SIEM-1183
+jira-example-html.html
+
+----
+editing a page:
+https://jira.trustwave.com/secure/EditIssue!default.jspa?id=151458
+
+- find textarea:customfield_10043, grab its innerhtml?
+- parse out wiki table
+	- start with textarea:customfield_10043 object
+	- instantiate singleCellString
+	- foreach markup line:
+		- create Cells Array
+		- build singleCellString between each | or ||
+			- if EOL == |/|| -> cell is finished (INCORRECT: this marks the end of a ROW)
+				- Cells.push(singleCellString)
+				- clear singleCellString
+			- else
+				- add \n to singleCellString
+				- continue to next foreach iteration
+
+- wiki table parsing
+	- textarea:customfield_10043 object
+	- str rawMarkup = textarea:customfield_10043.innerHTML
+	- first, split on || or | + \n (this makes array of rows)
+		Array allRows = rawMarkup.split(/\|\n/)
+	- foreach array of rows, split on || or | (this makes array of cells)
+
+
+- create html table, with wiki markup in each cell
+	- specific size?
+	- put into div? where do we put the div?
+	- must have 'save' control
+- add "edit" link/button (near a:customfield_10043-preview_link)
+	- hides wiki-edit pane
+	- shows our html/jira table
+
+
+----
+[questions]
+- how do we retrieve jira markup?
+- how do we edit?
+	- cell by cell
+	- remove all text in cell, replace with textarea?
+	- retain wiki markup??? (will have to convert html to wiki)
+- how do we save?
+	- store/hide 
+
+----
+[reverse engineering]
+
+view:
+<div id="customfield_10043-val" class="value type-textarea twixified">
+div customfield_10043-val
+- contains two divs:
+	- class="twixi-wrap verbose"
+	- class="twixi-wrap concise"
+- and inside each of the above is:
+	- div class="flooded"
+- ALL tables on page are class='confluenceTable'
+- ALL cells are td class='confluenceTd'
+
+edit: (we want this)
+<div id="customfield_10043-wiki-edit" class="wiki-edit-content">
+
+..within above div, actual textarea with markup:
+<textarea  class="textarea long-field wiki-textfield" cols="40" id="customfield_10043" name="customfield_10043" rows="5" wrap="virtual">
+STUFF!
+</textarea>
+
+button/link to switch between wiki-edit and wiki-renderer:
+<a class="wiki-renderer fullscreen" href="#" id="customfield_10043-preview_link" title="preview">preview</a>
+
+
+
+----
+things to convert:
+- tables, obvs
+- ordered/unordered lists
+- bold/italic/underline
+
