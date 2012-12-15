@@ -4,7 +4,7 @@
 // @description (by Andy George) Allows for WYSIWYG editing of some Jira fields
 // @include     http://jira.trustwave.com/*
 // @include     https://jira.trustwave.com/*
-// @version     2012-11-14
+// @version     2012-12-15
 // @grant       none
 // ==/UserScript==
 
@@ -12,6 +12,17 @@
 - doesn't really handle multiple linebreaks in textareas too well, gotta convert that to jira "\\" strings in a better fashion
 - using the 'preview' icon button doesn't (yet) hide the edit buttons; figure out logic to do that
 - only supports a single table
+*/
+
+/* New with Jira 5.2:
+- in-line edit (clicking directly on the field) isn't detected by this script
+- clicking on Edit doesn't navigate to edit page, and instead opens a dialog on the current screen. Also not detected by this script.
+
+Stuff I've found out:
+- in-line: editing creates a form  (id='customfield_10043-form')
+- in-line: edit div is still named 'customfield_10043-wiki-edit', but obviously isn't always detected
+- Edit dialog: edit link contains a span with class 'trigger-text', which may be what creates the dialog, versus loading an EditIssue page
+- Edit dialog: div seems to be called 'customfield_10043-val'
 */
 
 /* TODO:
