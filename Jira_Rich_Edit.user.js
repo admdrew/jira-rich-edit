@@ -4,7 +4,7 @@
 // @description (by Andy George) Allows for WYSIWYG editing of some Jira fields
 // @include     http://jira.trustwave.com/*
 // @include     https://jira.trustwave.com/*
-// @version     2012-12-15
+// @version     2013-02-28
 // @grant       none
 // ==/UserScript==
 
@@ -769,6 +769,17 @@ editButton.onclick = function() {
 	tableDnD.init(document.getElementById(EL_TW_EDIT_TABLE));
 }
 
+//- EL_TW_CANCEL_BUTTON
+var cancelButton = document.createElement("input");
+cancelButton.type = "button";
+cancelButton.value = "Cancel";
+cancelButton.setAttribute("id", EL_TW_CANCEL_BUTTON);
+cancelButton.onclick = function() {
+	toggleVisibility();
+	cancelButton.value = "Cancel";
+}
+cancelButton.style.display = "none";
+
 //- EL_TW_SAVE_BUTTON
 var saveButton = document.createElement("input");
 saveButton.type = "button";
@@ -777,18 +788,9 @@ saveButton.setAttribute("id", EL_TW_SAVE_BUTTON);
 saveButton.onclick = function() {
 	saveTableToRawjira();
 	toggleVisibility();
+	cancelButton.value = "Cancel";
 }
 saveButton.style.display = "none";
-
-//- EL_TW_CANCEL_BUTTON
-var cancelButton = document.createElement("input");
-cancelButton.type = "button";
-cancelButton.value = "Cancel";
-cancelButton.setAttribute("id", EL_TW_CANCEL_BUTTON);
-cancelButton.onclick = function() {
-	toggleVisibility();
-}
-cancelButton.style.display = "none";
 
 //- EL_TW_ADDROW_BUTTON
 var addrowButton = document.createElement("input");
@@ -808,3 +810,5 @@ divEditButtons.insertBefore(saveButton, divEditButtons.childNodes[0]);
 divEditButtons.insertBefore(editButton, divEditButtons.childNodes[0]);
 
 previewButton.parentNode.appendChild(addrowButton);
+cancelButton.value = "View Jira Format (discard changes)"
+editButton.onclick();
